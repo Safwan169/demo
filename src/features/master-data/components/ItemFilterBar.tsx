@@ -5,21 +5,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export type RoleFilter = "all" | "customers" | "suppliers";
-export type StatusFilter = "active" | "all";
+export type ItemStatusFilter = "active" | "all";
 
-const ROLE_TABS: { key: RoleFilter; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "customers", label: "Customers" },
-  { key: "suppliers", label: "Suppliers" },
-];
-
-const STATUS_TABS: { key: StatusFilter; label: string }[] = [
+const STATUS_TABS: { key: ItemStatusFilter; label: string }[] = [
   { key: "active", label: "Active" },
   { key: "all", label: "All" },
 ];
 
-/** A field label above a filter control (uppercase micro-label per Parties.dc.html). */
+/** A field label above a filter control (uppercase micro-label per Items.dc.html). */
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <span className="text-[10.5px] font-semibold uppercase tracking-[0.4px] text-muted-foreground">
@@ -29,13 +22,11 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Party list filter bar (spec §4/§8; Parties.dc.html). A card holding a Role
- * segmented control (fill on active), a Status segmented control, a labelled name
- * search, and Apply / Clear actions. `q` is a draft applied on Apply / Enter.
+ * Item list filter bar (spec §4; Items.dc.html). A card holding a Status segmented
+ * control (fill on active), a labelled code/name search, and Apply / Clear actions.
+ * `q` is a draft applied on Apply / Enter.
  */
-export function PartyFilterBar({
-  role,
-  onRole,
+export function ItemFilterBar({
   status,
   onStatus,
   q,
@@ -43,10 +34,8 @@ export function PartyFilterBar({
   onApply,
   onClear,
 }: {
-  role: RoleFilter;
-  onRole: (r: RoleFilter) => void;
-  status: StatusFilter;
-  onStatus: (s: StatusFilter) => void;
+  status: ItemStatusFilter;
+  onStatus: (s: ItemStatusFilter) => void;
   q: string;
   onQ: (v: string) => void;
   onApply: () => void;
@@ -55,33 +44,6 @@ export function PartyFilterBar({
   return (
     <Card className="p-3.5 sm:px-4">
       <div className="flex flex-wrap items-end gap-3.5">
-        {/* Role */}
-        <div className="flex flex-none flex-col gap-1.5">
-          <FieldLabel>Role</FieldLabel>
-          <div
-            role="group"
-            aria-label="Filter by role"
-            className="flex h-9 gap-0.5 rounded-token bg-muted p-0.5"
-          >
-            {ROLE_TABS.map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                aria-pressed={role === t.key}
-                onClick={() => onRole(t.key)}
-                className={cn(
-                  "flex items-center rounded-sm px-3.5 text-[12.5px] font-semibold transition-colors",
-                  role === t.key
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Status */}
         <div className="flex flex-none flex-col gap-1.5">
           <FieldLabel>Status</FieldLabel>
@@ -121,8 +83,8 @@ export function PartyFilterBar({
               onKeyDown={(e) => {
                 if (e.key === "Enter") onApply();
               }}
-              placeholder="Search by party name"
-              aria-label="Search parties by name"
+              placeholder="Search by code or name"
+              aria-label="Search items by code or name"
               className="min-w-0 flex-1 border-none bg-transparent text-[13.5px] text-foreground outline-none placeholder:text-faint"
             />
           </div>
